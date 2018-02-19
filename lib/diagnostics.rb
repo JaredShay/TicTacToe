@@ -4,23 +4,22 @@ class Diagnostics
   include Element
 
   def initialize
-    @render = false
-    @counter = 0
+    @render       = false
+    @counter      = 0
+    @last_render  = 0
+    @step_size_ms = 500
   end
 
   def render?
     @render
   end
 
-  def update(_, fps)
-    @counter += 1
-
-    # Arbritrary count here to stop re-rendering on every tick
-    if @counter == 5000
-      @counter = 0
-      paint(fps)
-
+  def tick(state)
+    if (state.time_in_ms - @last_render) > @step_size_ms
+      @last_render = state.time_in_ms
       @render = true
+
+      paint(state.fps)
     else
       @render = false
     end

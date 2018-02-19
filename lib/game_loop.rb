@@ -1,5 +1,8 @@
 require_relative './fps'
 
+# GameLoop handles the mechanics of the main game loop.
+#
+# Each loop yields the number of ticks, the elapsed time, and the frame rate.
 class GameLoop
   FPS_SMOOTHING = 10.0
 
@@ -17,14 +20,10 @@ class GameLoop
     Enumerator.new do |yielder|
       ticks = 0
       loop do
-        # my code is too fast so I need to slow it down. Actually serious.
-        # Screen will flickr as it can't clear and re-render in time to keep
-        # up with the framerate. This slows it down
-
         ticks += 1
         elapsed_time_ms = time_in_ms(Time.now) - @initial_time_ms
-
         @fps.update(ticks, elapsed_time_ms)
+
         yielder << [ticks, elapsed_time_ms, @fps.out]
       end
     end

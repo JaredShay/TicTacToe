@@ -13,11 +13,11 @@ class Window
     @elements << [element, offset_row, offset_col]
   end
 
-  def update_elements(time_in_ms, fps)
+  def tick(state)
     @render = false
 
     @elements.each do |element, offset_row, offset_col|
-      element.update(time_in_ms, fps)
+      element.tick(state)
 
       if element.render?
         @render = true

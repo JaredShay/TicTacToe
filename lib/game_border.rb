@@ -16,10 +16,10 @@ class GameBorder
     @time_of_state_change_ms = 0
   end
 
-  def update(time_in_ms, fps)
-    if time_in_ms - @time_of_state_change_ms >= 1000
+  def tick(state)
+    if state.time_in_ms - @time_of_state_change_ms >= 1000
       paint
-      @time_of_state_change_ms = time_in_ms
+      @time_of_state_change_ms = state.time_in_ms
 
       @render = true
     else
