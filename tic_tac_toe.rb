@@ -27,11 +27,11 @@ class Main
 
   def start
     GameLoop.start do |ticks, time_in_ms, fps|
+      @renderer.render
+
       tick(ticks, time_in_ms, fps)
 
       @window.tick(@state)
-
-      @renderer.render
     end
   end
 
@@ -59,4 +59,4 @@ class Main
   end
 end
 
-Main.new(window_width: 60, window_height: 40).start
+Main.new(window_width: 30, window_height: 20).start

@@ -2,25 +2,36 @@ require_relative './element'
 
 class GameBorder
   include Element
+  extend Element
+
+  STATES = [
+    [150, color('·', :white, :default)],
+    [200,  color('o', :white, :default)],
+    [1000, color('O', :white, :default)],
+    [1000, color('X', :white, :default)],
+    [1000, color('O', :white, :default)],
+    [200,  color('o', :white, :default)],
+    [150, color('·', :white, :default)],
+  ]
 
   def initialize(width, height)
-    @tiles = ['x', 'o'].cycle
-
     @width  = width
     @height = height
 
-    paint
-    @render   = true
-
-    @time_in_ms              = 0
+    @states                  = STATES.cycle
     @time_of_state_change_ms = 0
+    @state                   = @states.next
+
+    paint
+    @render = true
   end
 
-  def tick(state)
-    if state.time_in_ms - @time_of_state_change_ms >= 1000
-      paint
-      @time_of_state_change_ms = state.time_in_ms
+  def tick(game_state)
+    if (game_state.time_in_ms - @time_of_state_change_ms) >= @state[0]
+      @state = @states.next
+      @time_of_state_change_ms = game_state.time_in_ms
 
+      paint
       @render = true
     else
       @render = false
@@ -32,7 +43,7 @@ class GameBorder
   end
 
   def paint
-    tile = @tiles.next
+    tile = @state[1]
 
     @buffer = []
 

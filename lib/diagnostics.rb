@@ -2,12 +2,14 @@ require_relative './element'
 
 class Diagnostics
   include Element
+  extend Element
 
   def initialize
     @render       = false
     @counter      = 0
     @last_render  = 0
     @step_size_ms = 500
+    @buffer       = []
   end
 
   def render?
