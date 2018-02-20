@@ -1,3 +1,6 @@
+require_relative './animation'
+require_relative './animation_sequence'
+
 module Element
   attr_reader :buffer
 
