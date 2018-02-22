@@ -1,8 +1,5 @@
-require_relative './element'
-
 class Diagnostics
-  include Element
-  extend Element
+  attr_reader :buffer
 
   def initialize
     @render       = false

@@ -1,9 +1,7 @@
 require_relative './animation'
 require_relative './animations'
 
-module Element
-  attr_reader :buffer
-
+module Color
   COLORS = {
     default:       "39",
     black:         "30",

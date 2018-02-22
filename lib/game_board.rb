@@ -1,7 +1,7 @@
-require_relative './element'
+require_relative './color'
 
 class GameBoard
-  include Element
+  extend Color
 
   SELECTOR =
 <<-eos
@@ -25,6 +25,7 @@ eos
       |       |
 eos
 
+  attr_reader :buffer
   def initialize
     paint
     @render   = true

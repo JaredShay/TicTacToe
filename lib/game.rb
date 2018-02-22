@@ -1,9 +1,9 @@
-require_relative './element'
+require_relative './color'
 
 class Game
-  include Element
-  extend Element
+  include Color
 
+  attr_reader :buffer
   def initialize(width, height)
     @tiles = [
       color('-', :default, :default),

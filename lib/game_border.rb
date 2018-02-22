@@ -1,8 +1,7 @@
-require_relative './element'
+require_relative './color'
 
 class GameBorder
-  include Element
-  extend Element
+  extend Color
 
   TURN_1_TRANSITION = [
     [300, color('·', :black, :white)],
@@ -26,6 +25,7 @@ class GameBorder
     [500,  color('x', :black, :white)],
   ]
 
+  attr_reader :buffer
   def initialize(width, height)
     @width  = width
     @height = height
