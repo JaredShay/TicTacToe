@@ -1,4 +1,6 @@
 require_relative './fps'
+require_relative './input_queue'
+require 'io/console'
 
 # GameLoop handles the mechanics of the main game loop.
 #
@@ -14,17 +16,30 @@ class GameLoop
   def initialize(time, fps_smoothing = FPS_SMOOTHING)
     @initial_time_ms = time_in_ms(time)
     @fps             = FPS.new(fps_smoothing)
+    @input_queue     = InputQueue.new
   end
 
   def start
+    set_terminal_options
+
+    input_thread = Thread.new do
+      while(c = STDIN.getc) do
+        handle_exit if c == "\u0003"
+
+        @input_queue.enqueue(c)
+      end
+    end
+
     Enumerator.new do |yielder|
       ticks = 0
       loop do
+        input = @input_queue.dequeue
+
         ticks += 1
         elapsed_time_ms = time_in_ms(Time.now) - @initial_time_ms
         @fps.update(ticks, elapsed_time_ms)
 
-        yielder << [ticks, elapsed_time_ms, @fps.out]
+        yielder << [ticks, elapsed_time_ms, @fps.out, input]
       end
     end
   end
@@ -33,5 +48,25 @@ class GameLoop
 
   def time_in_ms(time)
     (time.to_f * 1000.0).to_i
+  end
+
+  def handle_exit
+    unset_terminal_options
+
+    exit(1)
+  end
+
+  def set_terminal_options
+    # raw   - read characters without using return
+    # opost - remove all post processing
+    # echo  - don't echo back characters
+    system("stty raw opost -echo")
+  end
+
+  def unset_terminal_options
+    # raw   - read characters without using return
+    # opost - remove all post processing
+    # echo  - don't echo back characters
+    system("stty -raw echo")
   end
 end

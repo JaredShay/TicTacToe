@@ -26,7 +26,9 @@ class Main
   end
 
   def start
-    GameLoop.start do |ticks, time_in_ms, fps|
+    GameLoop.start do |ticks, time_in_ms, fps, input|
+      @state.key_pressed = input
+
       @renderer.render
 
       tick(ticks, time_in_ms, fps)
