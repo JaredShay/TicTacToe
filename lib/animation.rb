@@ -2,7 +2,6 @@ class Animation
   def initialize(states, infinite: false)
     @length                  = states.length
     @states                  = states.cycle
-    @time_of_state_change_ms = 0
     @curr_state_pos          = 0
     @state                   = @states.next
     @infinite                = infinite
@@ -18,6 +17,8 @@ class Animation
   end
 
   def tick(time_in_ms)
+    @time_of_state_change_ms ||= time_in_ms
+
     if (time_in_ms - @time_of_state_change_ms) >= transition_time_ms
       @time_of_state_change_ms = time_in_ms
       @state                   = @states.next
