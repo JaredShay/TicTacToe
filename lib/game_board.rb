@@ -1,83 +1,31 @@
 require_relative './color'
 
 class GameBoard
-  extend Color
-
-  SELECTOR =
-<<-eos
-┌---┐
-|   |
-└---┘
-eos
-
-  BOARD =
-<<-eos
-      |       |
-      |       |
-      |       |
-------+-------+-------
-      |       |
-      |       |
-      |       |
-------+-------+-------
-      |       |
-      |       |
-      |       |
-eos
+  include Color
 
   attr_reader :buffer
-  def initialize
+  def initialize(width, height)
+    @width  = width
+    @height = height
+
     paint
-    @render   = true
+  end
+
+  def tick(state)
   end
 
   def render?
-    true
+    false
   end
 
   def paint
+    tile = color(' ', :white, :white)
+
     @buffer = []
-
-    @buffer << [0, 7,  '|']
-    @buffer << [0, 15, '|']
-    @buffer << [1, 7,  '|']
-    @buffer << [1, 15, '|']
-    @buffer << [2, 7,  '|']
-    @buffer << [2, 15, '|']
-
-    @buffer << [3, 7, '+']
-    @buffer << [3, 15, '+']
-
-    @buffer << [4, 7,  '|']
-    @buffer << [4, 15, '|']
-    @buffer << [5, 7,  '|']
-    @buffer << [5, 15, '|']
-    @buffer << [6, 7,  '|']
-    @buffer << [6, 15, '|']
-
-    @buffer << [7, 7, '+']
-    @buffer << [7, 15, '+']
-
-    @buffer << [8, 7,  '|']
-    @buffer << [8, 15, '|']
-    @buffer << [9, 7,  '|']
-    @buffer << [9, 15,  '|']
-    @buffer << [10, 7, '|']
-    @buffer << [10, 15, '|']
-
-    (0..6).to_a.each do |n|
-      @buffer << [3, n, '-']
-      @buffer << [7, n, '-']
-    end
-
-    (8..14).to_a.each do |n|
-      @buffer << [3, n, '-']
-      @buffer << [7, n, '-']
-    end
-
-    (16..21).to_a.each do |n|
-      @buffer << [3, n, '-']
-      @buffer << [7, n, '-']
+    (@height).round.times do |row|
+      (@width).round.times do |col|
+        @buffer << [row, col, tile]
+      end
     end
   end
 end

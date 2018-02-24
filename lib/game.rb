@@ -3,44 +3,45 @@ require_relative './color'
 class Game
   include Color
 
+  X = <<-eos
+                        //           //
+                       //           //
+                      //           //
+                     //           //
+         -----------//-----------//-----------
+                   //           //
+                  //           //
+                 //           //
+                //           //
+    -----------//-----------//-----------
+              //           //
+             //           //
+            //           //
+           //           //
+  eos
+
   attr_reader :buffer
-  def initialize(width, height)
-    @tiles = [
-      color('-', :default, :default),
-      color('.', :default, :default)
-    ].cycle
-    @tile = @tiles.next
-
-    @width  = width
-    @height = height
-
-    @time_of_state_change_ms = 0
-
+  def initialize
     paint
-    @render = true
   end
 
   def tick(state)
-    if state.key_pressed
-      @tile = @tiles.next
-
-      paint
-      @render = true
-    else
-      @render = false
-    end
   end
 
   def render?
-    @render
+    false
   end
 
   def paint
     @buffer = []
-    @height.times do |row|
-      @width.times do |col|
-        @buffer << [row, col, @tile]
+
+    X.split("\n").each_with_index do |row, ri|
+      row.split('').each_with_index do |el, ci|
+        if el == "/" || el == "-"
+          @buffer << [ri, ci, color(el, :blue, :black)]
+        end
       end
     end
   end
+
 end

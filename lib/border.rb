@@ -1,28 +1,28 @@
 require_relative './color'
 
-class GameBorder
+class Border
   extend Color
 
   TURN_1_TRANSITION = [
-    [300, color('·', :black, :white)],
-    [200,  color('o', :black, :white)],
-    [100, color('O', :black, :white)],
+    [300, color('·', :white, :black)],
+    [200,  color('o', :white, :black)],
+    [100, color('O', :white, :black)],
   ]
 
   TURN_1_HOLD = [
-    [1000, color('O', :black, :white)],
-    [500,  color('o', :black, :white)],
+    [800, color('O', :white, :black)],
+    [300,  color('o', :white, :black)],
   ]
 
   TURN_2_TRANSITION = [
-    [300, color('·', :black, :white)],
-    [200,  color('x', :black, :white)],
-    [100, color('X', :black, :white)],
+    [300, color('·', :white, :black)],
+    [200,  color('x', :white, :black)],
+    [100, color('X', :white, :black)],
   ]
 
   TURN_2_HOLD = [
-    [1000, color('X', :black, :white)],
-    [500,  color('x', :black, :white)],
+    [800, color('X', :white, :black)],
+    [300,  color('x', :white, :black)],
   ]
 
   attr_reader :buffer

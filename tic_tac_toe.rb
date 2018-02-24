@@ -1,12 +1,13 @@
 require_relative './lib/window'
 require_relative './lib/fps'
-require_relative './lib/game'
-require_relative './lib/game_border'
+require_relative './lib/background'
+require_relative './lib/border'
 require_relative './lib/diagnostics'
 require_relative './lib/renderer'
 require_relative './lib/game_loop'
 require_relative './lib/game_board'
 require_relative './lib/game_state'
+require_relative './lib/game'
 
 class Main
   WINDOW_WIDTH  = 10
@@ -49,9 +50,12 @@ class Main
   def initialize_window(width, height)
     window = Window.new(width, @diagnostics ? height + 1 : height)
 
-    window.add_element(Game.new(width, height), 0, 0)
-    window.add_element(GameBorder.new(width, height), 0, 0)
-#    window.add_element(GameBoard.new, 4, 4)
+    window.add_element(Background.new(width, height), 0, 0)
+    window.add_element(Border.new(width, height), 0, 0)
+    window.add_element(
+      GameBoard.new(width * 0.75, height * 0.75), height / 8, width / 8
+    )
+    window.add_element(Game.new, height / 8 + 2, width / 8 + 4)
 
     if @diagnostics
       window.add_element(Diagnostics.new, @window_height, 0)
@@ -61,4 +65,4 @@ class Main
   end
 end
 
-Main.new(window_width: 30, window_height: 20).start
+Main.new(window_width: 80, window_height: 24).start
