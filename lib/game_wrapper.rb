@@ -47,17 +47,15 @@ class GameWrapper
 
     @buffer = []
 
-    @selection_mapping = {
-      [0,0] => [0,0],
-      [0,1] => [0,13],
-      [0,2] => [0,26],
-      [1,0] => [5,0],
-      [1,1] => [5,13],
-      [1,2] => [5,26],
-      [2,0] => [10,0],
-      [2,1] => [10,13],
-      [2,2] => [10,26],
-    }
+    @selection_mapping = {}
+    @size.times do |row|
+      @size.times do |col|
+        @selection_mapping[[row, col]] = [
+          row * (ROW_SIZE + ROW_DIVIDER_SIZE),
+          col * (COL_SIZE + COL_DIVIDER_SIZE)
+        ]
+      end
+    end
 
     paint
   end
