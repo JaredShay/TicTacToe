@@ -3,26 +3,6 @@ require_relative './color'
 class GamePresenter
   include Color
 
-  PLAY_SPACE = <<-eos
-           //           //          .
-           //           //          .
-           //           //          .
-           //           //          .
------------//-----------//-----------
-           //           //          .
-           //           //          .
-           //           //          .
-           //           //          .
------------//-----------//-----------
-           //           //          .
-           //           //          .
-           //           //          .
-           //           //          .
-  eos
-  # 46 x 14
-
-  PLAY_SPACE_ROWS = PLAY_SPACE.split("\n")
-
   COL_SIZE         = 11
   COL_DIVIDER_SIZE = 2
   ROW_SIZE         = 4
