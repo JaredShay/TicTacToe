@@ -7,45 +7,46 @@ require_relative './lib/renderer'
 require_relative './lib/game_loop'
 require_relative './lib/game_board'
 require_relative './lib/game_state'
+require_relative './lib/game_presenter'
 require_relative './lib/game'
 
 class Main
-  WINDOW_WIDTH  = 10
-  WINDOW_HEIGHT = 10
+  WINDOW_WIDTH    = 10
+  WINDOW_HEIGHT   = 10
+  GAME_BOARD_SIZE = 3
 
   def initialize(
-    window_width:  WINDOW_WIDTH,
-    window_height: WINDOW_HEIGHT
+    window_width:    WINDOW_WIDTH,
+    window_height:   WINDOW_HEIGHT,
+    game_board_size: GAME_BOARD_SIZE
   )
-    @diagnostics   = true
-    @window_width  = window_width
-    @window_height = window_height
-    @window        = initialize_window(window_width, window_height)
-    @renderer      = Renderer.new(@window)
+    @diagnostics     = true
+    @window_width    = window_width
+    @window_height   = window_height
+    @game_board_size = game_board_size
+    @state           = GameState.new
+    @game            = Game.new(game_board_size)
 
-    @state         = GameState.new
+    @window   = initialize_window(window_width, window_height)
+    @renderer = Renderer.new(@window)
   end
 
   def start
+    @renderer.render
+
     GameLoop.start do |ticks, time_in_ms, fps, input|
       @state.key_pressed = input
-
-      @renderer.render
-
-      tick(ticks, time_in_ms, fps)
+      @state.ticks       = ticks
+      @state.time_in_ms  = time_in_ms
+      @state.fps         = fps
 
       @window.tick(@state)
+
+      @renderer.render
     end
   end
 
   private
-
-  # Game engine related tasks that happen per tick
-  def tick(ticks, time_in_ms, fps)
-    @state.ticks = ticks
-    @state.time_in_ms = time_in_ms
-    @state.fps = fps
-  end
 
   def initialize_window(width, height)
     window = Window.new(width, @diagnostics ? height + 1 : height)
@@ -55,7 +56,9 @@ class Main
     window.add_element(
       GameBoard.new(width * 0.75, height * 0.75), height / 8, width / 8
     )
-    window.add_element(Game.new, height / 8 + 2, width / 8 + 4)
+    window.add_element(
+      GamePresenter.new(@game), height / 8 + 2, width / 8 + 4
+    )
 
     if @diagnostics
       window.add_element(Diagnostics.new, @window_height, 0)
