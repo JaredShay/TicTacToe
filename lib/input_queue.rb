@@ -1,4 +1,9 @@
 class InputQueue
+  UP    = :up
+  DOWN  = :down
+  RIGHT = :right
+  LEFT  = :left
+
   def initialize
     @raw_queue = []
     @queue     = []
@@ -51,10 +56,10 @@ class InputQueue
     elsif @raw_queue.length == 3
       # At this point the queue must be "\e", "["
       input = case @raw_queue[2]
-              when "A" then :up_arrow
-              when "B" then :down_arrow
-              when "C" then :right_arrow
-              when "D" then :left_arrow
+              when "A" then UP
+              when "B" then DOWN
+              when "C" then RIGHT
+              when "D" then LEFT
               end
 
       # flush queue, input is handled or unknown sequence

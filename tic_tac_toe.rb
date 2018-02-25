@@ -7,7 +7,7 @@ require_relative './lib/renderer'
 require_relative './lib/game_loop'
 require_relative './lib/game_board'
 require_relative './lib/game_state'
-require_relative './lib/game_presenter'
+require_relative './lib/game_wrapper'
 require_relative './lib/game'
 
 class Main
@@ -40,6 +40,7 @@ class Main
       @state.time_in_ms  = time_in_ms
       @state.fps         = fps
 
+      # Pass state to all registered elements
       @window.tick(@state)
 
       @renderer.render
@@ -57,7 +58,7 @@ class Main
       GameBoard.new(width * 0.75, height * 0.75), height / 8, width / 8
     )
     window.add_element(
-      GamePresenter.new(@game), height / 8 + 2, width / 8 + 4
+      GameWrapper.new(@game), height / 8 + 2, width / 8 + 4
     )
 
     if @diagnostics
