@@ -1,16 +1,22 @@
 require_relative './color'
+require_relative './game'
 
 # Wrap a game object to handle presentation logic
 class GameWrapper
   include Color
+  extend Color
 
   COL_SIZE         = 11
   COL_DIVIDER_SIZE = 2
   ROW_SIZE         = 4
   ROW_DIVIDER_SIZE = 1
+  PLAYER_CHARACTER = {
+    Game::PLAYER_ONE => color('O', :white, :black),
+    Game::PLAYER_TWO => color('X', :white, :black)
+  }
 
   attr_reader :buffer
-  def initialize(game)
+  def initialize(game, state)
     @game = game
     @size = game.size
 
@@ -57,24 +63,29 @@ class GameWrapper
       end
     end
 
-    paint
+    paint(state)
   end
 
   def tick(state)
     @game.tick(state)
 
-    paint if @game.render?
+    paint(state) if @game.updated?
   end
 
   def render?
-    @game.render?
+    @game.updated?
   end
 
-  def paint
+  def paint(state)
     @buffer = []
     @buffer.concat(@row_dividers.map(&:dup)).concat(@col_dividers.map(&:dup))
 
     # Add selections
+    @game.selections.each do |selection|
+      row, col = @selection_mapping[[selection[0], selection[1]]]
+
+      @buffer << [row, col, PLAYER_CHARACTER[selection[2]]]
+    end
 
     # Add position
     position = @selection_mapping[@game.position]

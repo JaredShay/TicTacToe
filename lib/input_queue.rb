@@ -1,8 +1,10 @@
 class InputQueue
-  UP    = :up
-  DOWN  = :down
-  RIGHT = :right
-  LEFT  = :left
+  UP      = :up
+  DOWN    = :down
+  RIGHT   = :right
+  LEFT    = :left
+  RETURN  = :return
+  SPACE   = :space
 
   def initialize
     @raw_queue = []
@@ -21,6 +23,7 @@ class InputQueue
   # "\e", "[", "C" == right_arrow
   # "\e", "[", "D" == left_arrow
   # " "            == space_bar
+  # "\r"           == return
   def parse_queue
     input = nil
 
@@ -29,15 +32,14 @@ class InputQueue
       when /\w/
         input = @raw_queue[0].to_sym
       when "\r"
-        input = :return
+        input = RETURN
       when " "
-        input = :space
+        input = SPACE
       end
 
       if @raw_queue[0] == "\e"
         # do nothing, possible starting of escape sequence
       else
-        # flush queue, unknown or already handled character
         @raw_queue.clear
       end
     elsif @raw_queue.length == 2

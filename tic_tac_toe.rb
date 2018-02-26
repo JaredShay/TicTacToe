@@ -58,7 +58,7 @@ class Main
       GameBoard.new(width * 0.75, height * 0.75), height / 8, width / 8
     )
     window.add_element(
-      GameWrapper.new(@game), height / 8 + 2, width / 8 + 4
+      GameWrapper.new(@game, @state), height / 8 + 2, width / 8 + 4
     )
 
     if @diagnostics
