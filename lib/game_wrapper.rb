@@ -78,30 +78,35 @@ class GameWrapper
 
   def paint(state)
     @buffer = []
+    # This dup happens as the game is altered as it is rendered. In the future
+    # the renderers should not modify existing pixels so this shouldn't be
+    # needed
     @buffer.concat(@row_dividers.map(&:dup)).concat(@col_dividers.map(&:dup))
 
-    # Add selections
-    @game.selections.each do |selection|
-      row, col = @selection_mapping[[selection[0], selection[1]]]
+    @game.board.cells.each do |row, col, val|
+      next unless val
 
-      @buffer << [row, col, PLAYER_CHARACTER[selection[2]]]
+      _row, _col = @selection_mapping[[row, col]]
+
+      @buffer << [_row, _col, PLAYER_CHARACTER[val]]
     end
 
     # Add position
-    position = @selection_mapping[@game.position]
+    position = @selection_mapping[@game.player_position]
     # Top and bottom rows of selection
     COL_SIZE.times do |n|
-      @buffer << [position[0], n + position[1], color('-', :green, :green)]
+      @buffer << [position[0],                n + position[1], color('-', :green, :green)]
       @buffer << [position[0] + ROW_SIZE - 1, n + position[1], color('-', :green, :green)]
     end
-    # left and right rows
+
+    # left and right cols
     ROW_SIZE.times do |n|
-      @buffer << [position[0] + n, position[1], color('/', :green, :green)]
+      @buffer << [position[0] + n, position[1],     color('/', :green, :green)]
       @buffer << [position[0] + n, position[1] + 1, color('/', :green, :green)]
-      @buffer << [position[0] + n, position[1] + COL_SIZE - 1, color('/', :green, :green)]
-      @buffer << [position[0] + n, position[1] + COL_SIZE, color('/', :green, :green)]
+
+      @buffer << [position[0] + n, position[1] + (COL_SIZE - 1),     color('/', :green, :green)]
+      @buffer << [position[0] + n, position[1] + (COL_SIZE - 1) - 1, color('/', :green, :green)]
     end
-    #@buffer << [position[0], position[1], 'P']
 
     # Skew render
     @buffer.each do |pixel|

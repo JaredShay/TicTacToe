@@ -27,12 +27,12 @@ class Main
     @state           = GameState.new
     @game            = Game.new(game_board_size)
 
-    @window   = initialize_window(window_width, window_height)
-    @renderer = Renderer.new(@window)
+    @window   = in_progress_window(window_width, window_height)
+    @renderer = Renderer.new
   end
 
   def start
-    @renderer.render
+    @renderer.render(@window)
 
     GameLoop.start do |ticks, time_in_ms, fps, input|
       @state.key_pressed = input
@@ -43,13 +43,23 @@ class Main
       # Pass state to all registered elements
       @window.tick(@state)
 
-      @renderer.render
+      case @state.phase
+      when GameState::IN_PROGRESS
+        # DO NOTHING
+      when GameState::DRAW
+        # DO NOTHING
+      when GameState::WIN
+        raise 'win!'
+        #@window = win_window(@window_width, @window_height)
+      end
+
+      @renderer.render(@window)
     end
   end
 
   private
 
-  def initialize_window(width, height)
+  def in_progress_window(width, height)
     window = Window.new(width, @diagnostics ? height + 1 : height)
 
     window.add_element(Background.new(width, height), 0, 0)

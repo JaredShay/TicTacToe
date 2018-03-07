@@ -42,7 +42,11 @@ module Color
     white:         "107",
   }
 
-  def color(char, foreground, background)
-    "\e[#{COLORS[foreground]};#{BACKGROUND[background]}m#{char}\e[0m"
+  STYLES = {
+    bold: "1"
+  }
+
+  def color(char, foreground, background, styles = nil)
+    "\e[#{STYLES[styles]};#{COLORS[foreground]};#{BACKGROUND[background]}m#{char}\e[0m"
   end
 end

@@ -1,28 +1,29 @@
 require_relative './color'
+require_relative './game_state'
 
 class Border
   extend Color
 
   TURN_1_TRANSITION = [
-    [300, color('·', :white, :black)],
-    [200,  color('o', :white, :black)],
-    [100, color('O', :white, :black)],
+    [300, color('·', :white, :black, :bold)],
+    [200,  color('o', :white, :black, :bold)],
+    [100, color('O', :white, :black, :bold)],
   ]
 
   TURN_1_HOLD = [
-    [800, color('O', :white, :black)],
-    [300,  color('o', :white, :black)],
+    [800, color('O', :white, :black, :bold)],
+    [300,  color('o', :white, :black, :bold)],
   ]
 
   TURN_2_TRANSITION = [
-    [300, color('·', :white, :black)],
-    [200,  color('x', :white, :black)],
-    [100, color('X', :white, :black)],
+    [300, color('·', :white, :black, :bold)],
+    [200,  color('x', :white, :black, :bold)],
+    [100, color('X', :white, :black, :bold)],
   ]
 
   TURN_2_HOLD = [
-    [800, color('X', :white, :black)],
-    [300,  color('x', :white, :black)],
+    [800, color('X', :white, :black, :bold)],
+    [300,  color('x', :white, :black, :bold)],
   ]
 
   attr_reader :buffer
@@ -32,6 +33,7 @@ class Border
 
     @animations = Animations.new('.')
 
+    @player_turn = GameState::PLAYER_ONE
     @animations.push(Animation.new(TURN_1_TRANSITION))
     @animations.push(Animation.new(TURN_1_HOLD, infinite: true))
 
@@ -40,14 +42,16 @@ class Border
   end
 
   def tick(game_state)
-    if game_state.key_pressed == :right_arrow
-      @animations.push(Animation.new(TURN_2_TRANSITION))
-      @animations.push(Animation.new(TURN_2_HOLD, infinite: true))
-    end
-
-    if game_state.key_pressed == :left_arrow
-      @animations.push(Animation.new(TURN_1_TRANSITION))
-      @animations.push(Animation.new(TURN_1_HOLD, infinite: true))
+    if game_state.player_turn != @player_turn
+      if game_state.player_turn == GameState::PLAYER_TWO
+        @animations.push(Animation.new(TURN_2_TRANSITION))
+        @animations.push(Animation.new(TURN_2_HOLD, infinite: true))
+        @player_turn = GameState::PLAYER_TWO
+      else
+        @animations.push(Animation.new(TURN_1_TRANSITION))
+        @animations.push(Animation.new(TURN_1_HOLD, infinite: true))
+        @player_turn = GameState::PLAYER_ONE
+      end
     end
 
     @animations.tick(game_state.time_in_ms)

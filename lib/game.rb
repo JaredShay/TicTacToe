@@ -1,18 +1,24 @@
+require_relative './game_state'
+require_relative './board'
+require_relative './pixel'
+require_relative './win_calculator'
+require_relative './player_selections'
+
 class Game
-  attr_reader :size, :position, :selections
+  attr_reader :size, :player_position, :player_one_selections,
+    :player_two_selections, :board
 
   PLAYER_ONE = :player_one
   PLAYER_TWO = :player_two
 
   def initialize(size)
     @size = size
-    @board = Array.new(size) { Array.new(size) }
-    @position = [0, 0]
-    @taken_positions = {}
+    @board = Board.new(size)
+    @player_position = [0, 0]
     @updated = false
-
-    # TODO: probably should be a set here
-    @selections = []
+    @player_one_selections = PlayerSelections.new(size, GameState::PLAYER_ONE)
+    @player_two_selections = PlayerSelections.new(size, GameState::PLAYER_TWO)
+    @win_calculator  = WinCalculator.new(size)
   end
 
   def tick(state)
@@ -26,30 +32,30 @@ class Game
   def handle_input(state)
     case state.key_pressed
     when InputQueue::RETURN
-      if current_position_is_available?
-        @selections << [@position[0], @position[1], player_turn(state)]
-        @taken_positions[[@position[0], @position[1]]] = true
+      if board.empty_cell?(@player_position)
+        board.update_cell(@player_position.dup, state.player_turn)
 
-        update_player_turn(state)
+        update_player_selections(state)
+        update_game_state(state)
       end
     when InputQueue::UP
-      if @position[0] > 0
-        @position[0] = @position[0] - 1
+      if @player_position[0] > 0
+        @player_position[0] = @player_position[0] - 1
         @updated = true
       end
     when InputQueue::DOWN
-      if @position[0] < @size - 1
-        @position[0] = @position[0] + 1
+      if @player_position[0] < @size - 1
+        @player_position[0] = @player_position[0] + 1
         @updated = true
       end
     when InputQueue::LEFT
-      if @position[1] > 0
-        @position[1] = @position[1] - 1
+      if @player_position[1] > 0
+        @player_position[1] = @player_position[1] - 1
         @updated = true
       end
     when InputQueue::RIGHT
-      if @position[1] < @size - 1
-        @position[1] = @position[1] + 1
+      if @player_position[1] < @size - 1
+        @player_position[1] = @player_position[1] + 1
         @updated = true
       end
     else
@@ -57,15 +63,48 @@ class Game
     end
   end
 
-  def current_position_is_available?
-    !@taken_positions[@position]
+  # Update turns, check win condition, etc
+  def update_game_state(state)
+    if draw?(state)
+      state.phase = GameState::DRAW
+    elsif win?(state)
+      state.phase = GameState::WIN
+    else
+      state.phase = GameState::IN_PROGRESS
+
+      state.player_turn = if state.player_turn == GameState::PLAYER_ONE
+                            GameState::PLAYER_TWO
+                          else
+                            GameState::PLAYER_ONE
+                          end
+    end
   end
 
-  def update_player_turn(state)
-    state.player_turn = (state.player_turn == 0 ? 1 : 0)
+  def win?(state)
+    selections = case state.player_turn
+                 when GameState::PLAYER_ONE
+                   @player_one_selections
+                 when GameState::PLAYER_TWO
+                   @player_two_selections
+                 end
+
+    @win_calculator.is_win?(selections)
   end
 
-  def player_turn(state)
-    state.player_turn == 0 ? PLAYER_ONE : PLAYER_TWO
+  def draw?(state)
+    @board.full? && !win?(state)
+  end
+
+  def update_player_selections(state)
+    case state.player_turn
+    when GameState::PLAYER_ONE
+      @player_one_selections.add(
+        Pixel.new(@player_position[0], @player_position[1])
+      )
+    when GameState::PLAYER_TWO
+      @player_two_selections.add(
+        Pixel.new(@player_position[0], @player_position[1])
+      )
+    end
   end
 end

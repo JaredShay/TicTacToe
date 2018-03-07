@@ -1,15 +1,14 @@
 class Renderer
-  def initialize(window)
-    @window = window
+  def initialize
     @code   = %x{clear}
   end
 
-  def render
-    return unless @window.render?
+  def render(window)
+    return unless window.render?
 
     out = []
 
-    @window.buffer.each do |row|
+    window.buffer.each do |row|
       row.each do |val|
         out << val
       end
