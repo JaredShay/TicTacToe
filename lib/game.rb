@@ -19,6 +19,8 @@ class Game
     @player_one_selections = PlayerSelections.new(size, GameState::PLAYER_ONE)
     @player_two_selections = PlayerSelections.new(size, GameState::PLAYER_TWO)
     @win_calculator  = WinCalculator.new(size)
+
+    @output = []
   end
 
   def tick(state)
@@ -66,8 +68,10 @@ class Game
   # Update turns, check win condition, etc
   def update_game_state(state)
     if draw?(state)
+      raise 'in draw'
       state.phase = GameState::DRAW
     elsif win?(state)
+      raise 'in win'
       state.phase = GameState::WIN
     else
       state.phase = GameState::IN_PROGRESS
@@ -88,7 +92,7 @@ class Game
                    @player_two_selections
                  end
 
-    @win_calculator.is_win?(selections)
+    @win_calculator.is_win?(selections.to_1d)
   end
 
   def draw?(state)

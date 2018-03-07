@@ -25,6 +25,6 @@ class Board
   end
 
   def full?
-    @taken_positions.length == @size
+    @taken_positions.length == @size * @size
   end
 end
