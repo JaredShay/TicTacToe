@@ -10,6 +10,7 @@ class Window
   end
 
   def add_element(element, offset_row, offset_col)
+    # Render when first added.
     render_element_at(element, offset_row, offset_col)
 
     @elements << [element, offset_row, offset_col]
@@ -21,8 +22,16 @@ class Window
     @elements.each do |element, offset_row, offset_col|
       element.tick(state)
 
-      if element.render? || @render
-        @render = true
+      @render = true if element.render?
+      #if element.render? || @render
+      #  @render = true
+      #  render_element_at(element, offset_row, offset_col)
+      #end
+    end
+
+    if @render
+      # If any elements need to be rendered, render everything!
+      @elements.each do |element, offset_row, offset_col|
         render_element_at(element, offset_row, offset_col)
       end
     end

@@ -1,0 +1,2 @@
+class IntroInputHandler
+end

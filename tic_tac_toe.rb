@@ -1,7 +1,9 @@
 require_relative './lib/window'
 require_relative './lib/fps'
 require_relative './lib/background'
+require_relative './lib/intro_background'
 require_relative './lib/border'
+require_relative './lib/intro_border'
 require_relative './lib/diagnostics'
 require_relative './lib/renderer'
 require_relative './lib/game_loop'
@@ -9,6 +11,7 @@ require_relative './lib/game_board'
 require_relative './lib/game_state'
 require_relative './lib/game_wrapper'
 require_relative './lib/game'
+require_relative './lib/intro_title'
 
 class Main
   WINDOW_WIDTH    = 10
@@ -27,7 +30,7 @@ class Main
     @state           = GameState.new
     @game            = Game.new(game_board_size)
 
-    @window   = in_progress_window(window_width, window_height)
+    @window   = intro_window(window_width, window_height)
     @renderer = Renderer.new
   end
 
@@ -44,7 +47,10 @@ class Main
       @window.tick(@state)
 
       case @state.phase
+      when GameState::INTRO
+        # INTRO
       when GameState::IN_PROGRESS
+        @window = in_progress_window(@window_width, @window_height)
         # DO NOTHING
       when GameState::DRAW
         # DO NOTHING
@@ -58,6 +64,20 @@ class Main
   end
 
   private
+
+  def intro_window(width, height)
+    window = Window.new(width, @diagnostics ? height + 1 : height)
+    window.add_element(IntroBackground.new(width, height), 0, 0)
+    window.add_element(IntroTitle.new(width, height), 2, 0)
+    window.add_element(IntroBorder.new(width, height), 0, 0)
+    #window.add_element(IntroInputHandler.new(width, height), 0, 0)
+
+    if @diagnostics
+      window.add_element(Diagnostics.new, @window_height, 0)
+    end
+
+    window
+  end
 
   def in_progress_window(width, height)
     window = Window.new(width, @diagnostics ? height + 1 : height)
